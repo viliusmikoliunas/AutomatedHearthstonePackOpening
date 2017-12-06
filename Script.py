@@ -2,6 +2,7 @@ import pyautogui, time, os
 
 pyautogui.FAILSAFE = True
 
+#for 16:9 resolution
 openPacksButtonPercentages = (0.4052, 0.839)
 centerPackPercentages = (0.1932, 0.463)
 packOpeningSlotPercentages = (0.576, 0.469)
@@ -12,10 +13,20 @@ bottomLeftCardPercentages = (0.4922, 0.7806)
 bottomRightCardPerecentages = (0.6922, 0.792)
 doneButtonPercentages = (0.5849, 0.5185)
 
+defaultScreenshotFoldername = 'Hearthstone packs'
+
 desktopPath = os.path.join(r"C:\Users",os.getlogin(),'Desktop')
-screenshotPath = os.path.join(r"C:\Users",os.getlogin(),r"Pictures\KotFT packs")
+screenshotPath = os.path.join(r"C:\Users",os.getlogin(),'Pictures')
+screenshotFolderName = input("Folder name for pack screenshots: ")
+if not screenshotFolderName:
+   screenshotPath = os.path.join(screenshotPath,defaultScreenshotFoldername)
+else:
+   screenshotPath = os.path.join(screenshotPath,screenshotFolderName)
+
 if not os.path.exists(screenshotPath):
     os.makedirs(screenshotPath)
+
+packCount = int(input("Enter number of packs to be opened: "))
 
 hearthstoneWindow = pyautogui.getWindow('Hearthstone')
 time.sleep(3)
@@ -37,7 +48,6 @@ def clickInWindow(percentages,delay):
     pyautogui.click()
     return;
 
-packCount = int(input("Enter number of packs to be opened: "))
 #packopening loop
 for i in range(packCount):
     #drag pack to opening slot and reveal cards
@@ -59,11 +69,13 @@ for i in range(packCount):
     clickInWindow(rightCardPercentages,0.3)
     clickInWindow(topCardPercentages,0.3)
     time.sleep(0.5)
-    #take screenshot and move it from desktop to desired directory
+    #take screenshot
     pyautogui.press('printscreen')
+    #press 'done' button
+    clickInWindow(doneButtonPercentages,0.5)
+    #move screenshot from desktop to desired directory
     for file in os.listdir(desktopPath):
         if file.startswith('Hearthstone Screenshot') and file.endswith('.png'):
             os.rename(os.path.join(desktopPath,file),os.path.join(screenshotPath,file))
-    #press 'done' button
-    clickInWindow(doneButtonPercentages,0.5)
+    print ('{0} of {1} packs have been opened'.format(str(i+1),str(packCount)))
     time.sleep(1)
